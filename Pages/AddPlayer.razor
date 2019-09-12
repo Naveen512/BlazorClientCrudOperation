@@ -1,0 +1,65 @@
+@page "/player/add"
+@inject IPlayersLogic _playerLogic
+@inject NavigationManager _navigationManager
+
+<h4>Create Player</h4>
+<form class="justify-content-center">
+    <div class="form-group row">
+        <label for="txtFirstName" class="col-sm-2 col-form-label" >FirstName</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" id="txtFirstName" @bind="@player.FirstName" placeholder="First Name" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="txtLastName" class="col-sm-2 col-form-label">LastName</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" id="txtLastName" placeholder="Last Name" @bind="@player.LastName"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="txtCurrentAge" class="col-sm-2 col-form-label">Current Age</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" id="txtCurrentAge" placeholder="Current age" @bind="@player.CurrentAge" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="txtTeams" class="col-sm-2 col-form-lable">Major Teams</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" id="txtTeams" placeholder="Major Teams" @bind="@player.Teams" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="txtPlayingRole" class="col-sm-2 col-form-label">Playing Role</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" id="txtPlayingRole" placeholder="Playing Role" @bind="@player.PlayingRole" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="txtBattingStyle" class="col-sm-2 col-form-label">Batting Style</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" id="txtBattingStyle" placeholder="Batting Style" @bind="@player.BattingStyle" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="txtBowlingStyle" class="col-sm-2 col-form-label">Bowling Style</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" id="txtBowlingStyle" placeholder="Bowling Style" @bind="@player.BowlingStyle" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-8">
+            <button type="button" class="btn btn-primary" @onclick="Add">Add</button>
+        </div>
+    </div>
+</form>
+
+@code
+{
+    private Player player = new Player();
+
+    public async Task  Add()
+    {
+        await _playerLogic.CreatePlayer(player);
+        _navigationManager.NavigateTo("players");
+    }
+}

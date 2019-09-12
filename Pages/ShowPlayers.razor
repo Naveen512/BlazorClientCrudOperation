@@ -1,0 +1,121 @@
+@page "/players"
+@inject IJSRuntime _jsRunTime;
+@inject IPlayersLogic _playerLogic
+
+<div class="row">
+    <div class="col-12">
+        <a href="player/add" class="btn btn-primary btn-lg">Add Player</a>
+    </div>
+</div>
+<br>
+
+<div class="row">
+  @foreach (var player in players)
+  {
+      <div class="col-sm-4">
+          <div class="card">
+              <img src="/images/player.jpg" class="card-img-top">
+              <div class="card-body">
+                  <h4 Card-title>@player.FirstName @player.LastName</h4>
+                  
+                  
+              </div>
+                <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    Age
+                                </div>
+                                <div class="col-sm-6">
+                                    @player.CurrentAge
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    Playing Role
+                                </div>
+                                <div class="col-sm-6">
+                                    @player.PlayingRole
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    Batting Style
+                                </div>
+                                <div class="col-sm-6">
+                                    @player.BattingStyle
+                                </div>
+                            </div>
+                        </li>   
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    Bowling Style
+                                </div>
+                                <div class="col-sm-6">
+                                    @player.BowlingStyle
+                                </div>
+                            </div>
+                        </li> 
+                </ul>
+                <div class="card-body">
+                    <a href="/player/edit/@player.Id" class="btn btn-primary">Edit</a>
+                  <button class="btn btn-danger" @onclick='@(e => OpenDeleteModal(@player.Id,"delConfirmationModal"))'>Delete</button>
+                </div>
+          </div>
+      </div>
+  }
+</div>
+<div class="modal fad" id="delConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteModel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Warning!</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure, you want to delete this item?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick='@(e => CancelDeleteModal("delConfirmationModal"))'>Close</button>
+                <button type="button" class="btn btn-primary" @onclick='@(e => DeletePlayer("delConfirmationModal"))'>Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+@code
+{
+    private int ItemToDelete;
+    private IList<Player> players = new List<Player>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result =  await _playerLogic.GetAll() ;
+        players = result ?? new List<Player>();
+    }   
+
+    public async Task OpenDeleteModal(int palyerId,string modelIdName)
+    {
+        ItemToDelete = palyerId;
+        await _jsRunTime.InvokeAsync<string>("global.openModal",modelIdName);
+    }
+
+    public async Task DeletePlayer(string modelIdName)
+    {
+        var result = await _playerLogic.DeleteById(ItemToDelete);
+        players = result;
+        ItemToDelete = 0;
+        await _jsRunTime.InvokeAsync<string>("global.closeModal",modelIdName);
+    }
+
+    public async Task CancelDeleteModal(string modelIdName)
+    {
+        await _jsRunTime.InvokeAsync<string>("global.closeModal",modelIdName);
+    }
+}
